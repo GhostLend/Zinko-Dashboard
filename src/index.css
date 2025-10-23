@@ -10,11 +10,27 @@
     --gradient-accent: linear-gradient(135deg, #3B82F6 0%, #6366F1 100%);
     --shadow-elegant: 0 10px 30px -10px rgba(99, 102, 241, 0.3);
     --shadow-glow: 0 0 40px rgba(139, 92, 246, 0.2);
+    
+    /* Admin dark mode colors */
+    --admin-bg: 217 19% 10%;
+    --admin-sidebar: 217 19% 8%;
+    --admin-card: 217 19% 12%;
+    --admin-border: 217 19% 18%;
+    --admin-text: 0 0% 98%;
+    --admin-muted: 217 10% 60%;
+    --admin-accent: 263 70% 65%;
+    --admin-success: 142 71% 45%;
+    --admin-warning: 38 92% 50%;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
     background: linear-gradient(180deg, #FAFAF8 0%, #F5F3FF 100%);
+  }
+  
+  body.admin-mode {
+    background: hsl(var(--admin-bg));
+    color: hsl(var(--admin-text));
   }
 }
 
@@ -73,4 +89,49 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* Admin Styles */
+.admin-sidebar {
+  @apply bg-[hsl(var(--admin-sidebar))] border-r border-[hsl(var(--admin-border))];
+}
+
+.admin-card {
+  @apply bg-[hsl(var(--admin-card))] border border-[hsl(var(--admin-border))] rounded-lg;
+  transition: all 0.3s ease;
+}
+
+.admin-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.15);
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes countUp {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-left {
+  animation: slideInFromLeft 0.5s ease-out;
+}
+
+.animate-count-up {
+  animation: countUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
