@@ -1,52 +1,54 @@
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
-import { useQuery } from "@tanstack/react-query";
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend } from "recharts";
+import { ShieldIcon } from "lucide-react";
 
-const fetchBitcoinPrices = async () => {
-  const response = await fetch(
-    "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=180&interval=daily"
-  );
-  const data = await response.json();
-  
-  // Format data for the chart - take last 6 months
-  return data.prices.slice(-180).map(([timestamp, price]: [number, number]) => ({
-    date: new Date(timestamp).toLocaleDateString('en-US', { month: 'short' }),
-    price: Math.round(price)
-  }));
-};
+// Mock data for lending/borrowing positions over time
+const positionData = [
+  { month: 'Jan', lending: 245, borrowing: 180, collateral: 320 },
+  { month: 'Feb', lending: 312, borrowing: 210, collateral: 385 },
+  { month: 'Mar', lending: 289, borrowing: 195, collateral: 360 },
+  { month: 'Apr', lending: 378, borrowing: 245, collateral: 425 },
+  { month: 'May', lending: 445, borrowing: 290, collateral: 510 },
+  { month: 'Jun', lending: 512, borrowing: 325, collateral: 580 },
+];
 
 const PortfolioCard = () => {
-  const { data: priceData, isLoading } = useQuery({
-    queryKey: ['bitcoinPrices'],
-    queryFn: fetchBitcoinPrices,
-    refetchInterval: 60000, // Refetch every minute
-  });
-
-  if (isLoading) {
-    return (
-      <div className="glass-card p-6 rounded-lg mb-8 animate-fade-in">
-        <h2 className="text-xl font-semibold mb-6">Bitcoin Performance</h2>
-        <div className="w-full h-[200px] flex items-center justify-center">
-          <span className="text-muted-foreground">Loading...</span>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="glass-card p-6 rounded-lg mb-8 animate-fade-in">
-      <h2 className="text-xl font-semibold mb-6">Bitcoin Performance</h2>
-      <div className="w-full h-[200px]">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-semibold">Your Positions & Collateral</h2>
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10">
+          <ShieldIcon className="w-4 h-4 text-primary" />
+          <span className="text-xs font-medium text-primary">ZK Protected</span>
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="text-center p-4 rounded-lg bg-gradient-to-br from-success/10 to-success/5">
+          <p className="text-sm text-muted-foreground mb-1">Total Lent</p>
+          <p className="text-2xl font-bold text-success">$512K</p>
+        </div>
+        <div className="text-center p-4 rounded-lg bg-gradient-to-br from-warning/10 to-warning/5">
+          <p className="text-sm text-muted-foreground mb-1">Total Borrowed</p>
+          <p className="text-2xl font-bold text-warning">$325K</p>
+        </div>
+        <div className="text-center p-4 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5">
+          <p className="text-sm text-muted-foreground mb-1">Collateral</p>
+          <p className="text-2xl font-bold text-primary">$580K</p>
+        </div>
+      </div>
+
+      <div className="w-full h-[240px]">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={priceData}>
+          <BarChart data={positionData}>
             <XAxis 
-              dataKey="date" 
+              dataKey="month" 
               stroke="#475569"
               fontSize={12}
             />
             <YAxis 
               stroke="#475569"
               fontSize={12}
-              tickFormatter={(value) => `$${value}`}
+              tickFormatter={(value) => `$${value}K`}
             />
             <Tooltip 
               contentStyle={{ 
@@ -55,16 +57,13 @@ const PortfolioCard = () => {
                 borderRadius: '8px'
               }}
               labelStyle={{ color: '#0F172A' }}
-              itemStyle={{ color: '#6366F1' }}
+              formatter={(value) => `$${value}K`}
             />
-            <Line 
-              type="monotone" 
-              dataKey="price" 
-              stroke="#6366F1" 
-              strokeWidth={2}
-              dot={false}
-            />
-          </LineChart>
+            <Legend />
+            <Bar dataKey="lending" fill="#10B981" radius={[4, 4, 0, 0]} name="Lending" />
+            <Bar dataKey="borrowing" fill="#F59E0B" radius={[4, 4, 0, 0]} name="Borrowing" />
+            <Bar dataKey="collateral" fill="#6366F1" radius={[4, 4, 0, 0]} name="Collateral" />
+          </BarChart>
         </ResponsiveContainer>
       </div>
     </div>

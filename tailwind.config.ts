@@ -48,6 +48,14 @@ export default {
           DEFAULT: "#6366F1",
           foreground: "#FFFFFF",
         },
+        purple: {
+          DEFAULT: "#8B5CF6",
+          foreground: "#FFFFFF",
+        },
+        zkBlue: {
+          DEFAULT: "#3B82F6",
+          foreground: "#FFFFFF",
+        },
       },
       borderRadius: {
         lg: "1rem",
